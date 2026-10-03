@@ -1,0 +1,1003 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#08090d">
+<title>فروش‌یار AI</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;min-height:100%;background:#08090d;color:#f7f7fb;font-family:Tahoma,Arial,sans-serif;overflow-x:hidden}
+button,input,textarea,select{font:inherit;outline:none}
+button{cursor:pointer;-webkit-appearance:none}
+button:disabled{opacity:.5;cursor:not-allowed}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 15% 0,#5c2da522,transparent 28%),radial-gradient(circle at 90% 20%,#1686ff12,transparent 25%);z-index:0}
+.app{min-height:100vh;position:relative;z-index:1;padding-bottom:80px}
+.header{position:sticky;top:0;background:#0e1016f5;backdrop-filter:blur(20px);border-bottom:1px solid #222531;padding:14px 16px;z-index:20;display:flex;justify-content:space-between;align-items:center}
+.header h1{margin:0;font-size:18px;font-weight:800;color:#ad91ff}
+.header .status{font-size:11px;padding:5px 10px;border-radius:99px;background:#12251d;color:#55e39a;border:1px solid #1c4534}
+.header .status.offline{background:#2a1418;color:#ffb3bd;border-color:#5b2730}
+.main{padding:14px 12px;max-width:900px;margin:0 auto}
+.page{display:none;animation:fade .3s}
+.page.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.muted{color:#858997;font-size:12px;line-height:1.9}
+.card,.panel{background:linear-gradient(145deg,#11131b,#0d0f15);border:1px solid #252936;border-radius:16px}
+.card{padding:14px}
+.panel{padding:16px;margin-bottom:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid4{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cardTitle{font-size:12px;color:#969aa8}
+.number{font-size:18px;font-weight:800;margin-top:5px;word-break:break-all}
+.purple{color:#ad91ff}.blue{color:#71b8ff}.green{color:#5fe2a0}.orange{color:#ffb066}
+.sectionHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.sectionHead h2{margin:0;font-size:16px}
+.btn{border:1px solid #303441;background:#171923;color:#eee;border-radius:10px;padding:11px 14px;font-size:13px;font-weight:600;transition:.2s}
+.btn:active{transform:scale(.97)}
+.btn.primary{border:0;background:linear-gradient(135deg,#7c4dff,#9d6cff);color:#fff;font-weight:700}
+.btn.telegram{border:0;background:linear-gradient(135deg,#0088cc,#00a8e8);color:#fff;font-weight:700}
+.btn.bale{border:0;background:linear-gradient(135deg,#d4a017,#ffc107);color:#111;font-weight:700}
+.btn.success{border:0;background:linear-gradient(135deg,#1f9e63,#2dc87c);color:#fff;font-weight:700}
+.btn.danger{border:1px solid #5b2730;color:#ff8e9c}
+.btn.sm{padding:7px 11px;font-size:11px}
+.field{margin-bottom:12px}
+.field.full{grid-column:1/-1}
+.field label{display:block;color:#aeb2bf;font-size:12px;margin-bottom:6px;font-weight:600}
+.field input,.field textarea,.field select{width:100%;border:1px solid #2b2e3a;background:#090b10;color:#fff;border-radius:10px;padding:11px 12px;font-size:13px;transition:.2s}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:#7652c8;background:#0b0e14}
+.field textarea{min-height:100px;resize:vertical;font-family:inherit}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.actions .btn{flex:1;min-width:120px}
+.output{white-space:pre-wrap;line-height:1.9;background:#090b10;border:1px solid #292d38;border-radius:12px;padding:14px;min-height:100px;margin-top:12px;font-size:13px;word-break:break-word}
+.output:empty:before{content:"خروجی اینجا نمایش داده می‌شود...";color:#666b78}
+.msg{max-width:90%;padding:11px 14px;border-radius:14px;margin:8px 0;line-height:1.8;white-space:pre-wrap;font-size:13px;word-break:break-word}
+.msg.user{margin-right:auto;background:#7046c9}
+.msg.ai{margin-left:auto;background:#171923;border:1px solid #2b2e3a}
+.msg.err{background:#2a1418;border:1px solid #5b2730;color:#ffb3bd;margin-left:auto}
+.chat{min-height:300px;max-height:60vh;overflow-y:auto;padding:6px 2px}
+.chatbar{display:flex;gap:8px;margin-top:10px}
+.chatbar textarea{flex:1;min-height:48px;height:48px;resize:none;border:1px solid #2b2e3a;background:#090b10;color:#fff;border-radius:10px;padding:11px;font-family:inherit;font-size:13px}
+.send{width:54px;flex:none}
+.quick{display:flex;gap:6px;overflow-x:auto;padding:4px 0 9px;scrollbar-width:none}
+.quick::-webkit-scrollbar{display:none}
+.quick button{white-space:nowrap;border:1px solid #292d38;background:#11131a;color:#bfc2cc;border-radius:99px;padding:7px 12px;font-size:11px}
+.historyItem{padding:12px;border-bottom:1px solid #252936;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.historyItem:last-child{border:0}
+.historyItem b{font-size:13px;display:block;margin-bottom:3px}
+.bar{height:6px;background:#20232c;border-radius:99px;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#7650df,#a87aff);width:0;transition:.3s}
+.platformTabs{display:flex;gap:6px;margin-bottom:14px;background:#0d0f15;padding:5px;border-radius:12px;border:1px solid #252936}
+.platformTabs button{flex:1;border:0;background:transparent;color:#858997;padding:11px;border-radius:9px;font-size:13px;font-weight:600}
+.platformTabs button.active{background:#1f1a30;color:#fff}
+.platformTabs button.active.tg{background:linear-gradient(135deg,#0088cc,#00a8e8)}
+.platformTabs button.active.bl{background:linear-gradient(135deg,#d4a017,#ffc107);color:#111}
+.channelChip{display:inline-flex;align-items:center;gap:8px;background:#12251d;color:#55e39a;padding:8px 12px;border-radius:99px;font-size:12px;border:1px solid #1c4534;margin:4px 4px 4px 0}
+.channelChip.bale{background:#2a1d10;color:#ffc107;border-color:#5a3a1a}
+.channelChip button{background:none;border:0;color:inherit;font-size:15px;padding:0 3px;font-weight:bold}
+.statusBox{background:#090b10;border:1px solid #292d38;border-radius:10px;padding:11px;margin-top:10px;font-family:monospace;font-size:11px;line-height:1.7;white-space:pre-wrap;color:#b8bcc8;max-height:200px;overflow:auto;direction:ltr;text-align:left;word-break:break-all}
+.notice{background:#101a2a;border:1px solid #1a3a5a;color:#8ec8ff;padding:11px;border-radius:10px;font-size:12px;line-height:1.8;margin-bottom:12px}
+.notice.bale{background:#1a1408;border-color:#5a4a1a;color:#ffd98e}
+.notice.danger{background:#2a1418;border-color:#5b2730;color:#ffb3bd}
+.priceTag{display:inline-block;background:#12251d;color:#55e39a;padding:4px 9px;border-radius:99px;font-size:11px;font-weight:700;border:1px solid #1c4534;margin:2px}
+.priceTag.orange{background:#2a1d10;color:#ffb066;border-color:#5a3a1a}
+.modal{display:none;position:fixed;inset:0;background:#000d;z-index:100;align-items:center;justify-content:center;padding:14px}
+.modal.active{display:flex}
+.modalBox{width:100%;max-width:520px;background:#11131a;border:1px solid #303440;border-radius:20px;padding:18px;max-height:90vh;overflow:auto}
+.schedItem{background:#0d0f15;border:1px solid #252936;border-radius:10px;padding:11px;margin-bottom:8px;font-size:12px}
+.schedItem .row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+.schedItem .preview{color:#858997;font-size:11px;line-height:1.6;max-height:40px;overflow:hidden}
+.schedLog{background:#090b10;border:1px solid #292d38;border-radius:10px;padding:10px;font-family:monospace;font-size:10px;line-height:1.7;color:#b8bcc8;max-height:140px;overflow:auto;direction:ltr;text-align:left}
+.bottomNav{position:fixed;bottom:0;right:0;left:0;background:#0e1016f8;backdrop-filter:blur(20px);border-top:1px solid #292d38;z-index:50;display:flex;justify-content:space-around;padding:6px 0 calc(6px + env(safe-area-inset-bottom));height:auto;min-height:64px}
+.bottomNav button{flex:1;border:0;background:none;color:#777c89;font-size:10px;padding:6px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;transition:.2s}
+.bottomNav button.active{color:#b697ff}
+.bottomNav button span{font-size:18px;line-height:1}
+.toast{position:fixed;bottom:82px;left:50%;transform:translateX(-50%);background:#191c25;border:1px solid #303440;padding:11px 16px;border-radius:10px;z-index:200;display:none;font-size:12px;line-height:1.6;max-width:90%;text-align:center;box-shadow:0 10px 30px #000a}
+.toast.show{display:block;animation:fade .3s}
+.divider{height:1px;background:#252936;margin:14px 0}
+.tabs{display:flex;gap:5px;margin-bottom:12px;border-bottom:1px solid #252936;padding-bottom:8px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{border:0;background:transparent;color:#858997;padding:8px 12px;border-radius:8px;font-size:12px;white-space:nowrap}
+.tabs button.active{background:#1f1a30;color:#b697ff}
+@media(max-width:500px){.main{padding:12px 10px}.panel{padding:14px;border-radius:14px}.card{padding:12px}.number{font-size:16px}}
+@media(min-width:700px){.grid4{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+ <div class="header">
+  <h1>🤖 فروش‌یار AI</h1>
+  <span class="status" id="statusBadge">● آنلاین</span>
+ </div>
+
+ <div class="main">
+  <!-- ============ داشبورد ============ -->
+  <section id="page-home" class="page active">
+   <div class="grid4">
+    <div class="card"><div class="cardTitle">هزینه AI</div><div class="number purple" id="statCost">۰ ت</div></div>
+    <div class="card"><div class="cardTitle">قیمت فروش</div><div class="number green" id="statSell">۰ ت</div></div>
+    <div class="card"><div class="cardTitle">سود کل</div><div class="number orange" id="statProfit">۰ ت</div></div>
+    <div class="card"><div class="cardTitle">درخواست‌ها</div><div class="number blue" id="statReq">۰</div></div>
+   </div>
+
+   <div class="panel" style="margin-top:14px">
+    <div class="sectionHead"><h2>شروع سریع</h2></div>
+    <div class="actions">
+     <button class="btn primary" onclick="go('studio')">✦ ساخت محتوا</button>
+     <button class="btn bale" onclick="go('bale')">◆ بله</button>
+     <button class="btn telegram" onclick="go('telegram')">✈ تلگرام</button>
+     <button class="btn success" onclick="go('schedule')">🕐 زمان‌بندی</button>
+    </div>
+   </div>
+
+   <div class="panel">
+    <div class="sectionHead"><h2>مصرف توکن</h2></div>
+    <div class="muted">ورودی: <b id="lblIn">۰</b></div>
+    <div class="bar"><i id="barIn"></i></div>
+    <div class="muted" style="margin-top:8px">خروجی: <b id="lblOut">۰</b></div>
+    <div class="bar"><i id="barOut"></i></div>
+   </div>
+
+   <div class="panel">
+    <div class="sectionHead"><h2>تست اتصال</h2></div>
+    <div class="actions">
+     <button class="btn primary" onclick="testAI()">⚡ تست AI</button>
+     <button class="btn" onclick="go('settings')">⚙ تنظیمات</button>
+    </div>
+   </div>
+  </section>
+
+  <!-- ============ استودیو ============ -->
+  <section id="page-studio" class="page">
+   <div class="panel">
+    <div class="sectionHead"><h2>استودیو محتوا</h2></div>
+    <div class="grid2">
+     <div class="field"><label>محصول</label><input id="inProduct" placeholder="مثلاً زعفران"></div>
+     <div class="field"><label>پلتفرم</label><select id="inPlatform">
+       <option>اینستاگرام</option><option>تلگرام</option><option>بله</option><option>سایت فروشگاهی</option><option>واتساپ</option>
+     </select></div>
+     <div class="field"><label>نوع</label><select id="inType">
+       <option>کمپین فروش</option><option>کپشن تبلیغاتی</option><option>توضیحات محصول</option><option>مقاله سئو</option><option>سناریوی ویدئو</option><option>شعار و CTA</option>
+     </select></div>
+     <div class="field"><label>لحن</label><select id="inTone">
+       <option>خودمانی و فروشنده</option><option>حرفه‌ای</option><option>لوکس</option><option>صمیمی</option>
+     </select></div>
+     <div class="field"><label>مخاطب</label><input id="inAudience" placeholder="خانواده‌ها، فروشندگان"></div>
+     <div class="field"><label>طول</label><select id="inLength"><option>کوتاه</option><option>متوسط</option><option>کامل</option></select></div>
+     <div class="field full"><label>اطلاعات محصول</label><textarea id="inExtra" placeholder="ویژگی‌ها، قیمت، مزیت، تخفیف..."></textarea></div>
+    </div>
+    <div class="actions">
+     <button class="btn primary" id="btnGen" onclick="generate()">✦ تولید با Agent</button>
+     <button class="btn" onclick="copyOutput()">📋 کپی</button>
+     <button class="btn danger" onclick="clearOutput()">🗑 پاک</button>
+    </div>
+    <div class="muted" id="lastPrice" style="margin-top:10px"></div>
+    <div class="output" id="output"></div>
+    <div class="divider"></div>
+    <div class="actions">
+     <button class="btn bale" onclick="sendOutputTo('bale')">◆ ارسال به بله</button>
+     <button class="btn telegram" onclick="sendOutputTo('telegram')">✈ ارسال به تلگرام</button>
+     <button class="btn success" onclick="scheduleCurrent()">🕐 زمان‌بندی</button>
+    </div>
+   </div>
+  </section>
+
+  <!-- ============ بله ============ -->
+  <section id="page-bale" class="page">
+   <div class="panel">
+    <div class="sectionHead"><h2>⚙️ تنظیمات بله</h2><span class="muted" id="baleStatus">وصل نیست</span></div>
+    <div class="notice bale">📌 توکن از @BotFather بله. آدرس: tapi.bale.ai</div>
+    <div class="field"><label>توکن بات بله</label><input id="baleToken" placeholder="123456789:ABC..." dir="ltr"></div>
+    <div class="field"><label>آدرس API</label><input id="baleApi" value="https://tapi.bale.ai/bot" dir="ltr"></div>
+    <div class="field"><label>کانال انتخاب‌شده</label><div id="baleChannelLabel" class="muted">—</div></div>
+    <div class="actions">
+     <button class="btn primary" onclick="saveBale()">💾 ذخیره</button>
+     <button class="btn success" onclick="testBot('bale')">⚡ تست بات</button>
+     <button class="btn" onclick="loadChannels('bale')">📋 دریافت کانال‌ها</button>
+    </div>
+    <div id="baleResult" class="statusBox" style="display:none"></div>
+    <div id="baleChannels" style="margin-top:10px"></div>
+   </div>
+
+   <div class="panel">
+    <div class="sectionHead"><h2>◆ تولید + ارسال</h2></div>
+    <div class="grid2">
+     <div class="field"><label>موضوع</label><input id="baleProduct" placeholder="زعفران"></div>
+     <div class="field"><label>نوع</label><select id="baleType"><option>پست کانال</option><option>کپشن</option><option>توضیحات محصول</option><option>کمپین</option></select></div>
+     <div class="field"><label>لحن</label><select id="baleTone"><option>خودمانی و فروشنده</option><option>حرفه‌ای</option><option>لوکس</option><option>صمیمی</option></select></div>
+     <div class="field"><label>طول</label><select id="baleLength"><option>کوتاه</option><option>متوسط</option><option>کامل</option></select></div>
+     <div class="field full"><label>دستور دقیق</label><textarea id="balePrompt" placeholder="پست کوتاه، ۳ هشتگ، CTA..."></textarea></div>
+    </div>
+    <div class="actions">
+     <button class="btn primary" id="btnBaleGen" onclick="genFor('bale', false)">✦ فقط تولید</button>
+     <button class="btn bale" id="btnBaleGenSend" onclick="genFor('bale', true)">◆ تولید + ارسال</button>
+     <button class="btn bale" onclick="sendLast('bale')">◆ ارسال آخرین</button>
+    </div>
+    <div class="muted" id="baleLastPrice" style="margin-top:10px"></div>
+    <div class="output" id="baleOutput"></div>
+   </div>
+  </section>
+
+  <!-- ============ تلگرام ============ -->
+  <section id="page-telegram" class="page">
+   <div class="panel">
+    <div class="sectionHead"><h2>⚙️ تنظیمات تلگرام</h2><span class="muted" id="tgStatus">وصل نیست</span></div>
+    <div class="notice">📌 توکن از @BotFather تلگرام. آدرس: api.telegram.org</div>
+    <div class="field"><label>توکن بات تلگرام</label><input id="tgToken" placeholder="123456789:ABC..." dir="ltr"></div>
+    <div class="field"><label>آدرس API</label><input id="tgApi" value="https://api.telegram.org/bot" dir="ltr"></div>
+    <div class="field"><label>کانال</label><input id="tgChannel" placeholder="@my_channel یا -100..." dir="ltr"></div>
+    <div class="actions">
+     <button class="btn primary" onclick="saveTelegram()">💾 ذخیره</button>
+     <button class="btn success" onclick="testBot('telegram')">⚡ تست بات</button>
+    </div>
+    <div id="tgResult" class="statusBox" style="display:none"></div>
+   </div>
+
+   <div class="panel">
+    <div class="sectionHead"><h2>✈ تولید + ارسال</h2></div>
+    <div class="grid2">
+     <div class="field"><label>موضوع</label><input id="tgProduct" placeholder="زعفران"></div>
+     <div class="field"><label>نوع</label><select id="tgType"><option>پست کانال</option><option>کپشن</option><option>توضیحات محصول</option><option>کمپین</option></select></div>
+     <div class="field"><label>لحن</label><select id="tgTone"><option>خودمانی و فروشنده</option><option>حرفه‌ای</option><option>لوکس</option><option>صمیمی</option></select></div>
+     <div class="field"><label>طول</label><select id="tgLength"><option>کوتاه</option><option>متوسط</option><option>کامل</option></select></div>
+     <div class="field full"><label>دستور دقیق</label><textarea id="tgPrompt" placeholder="پست کوتاه، ۳ هشتگ، CTA..."></textarea></div>
+    </div>
+    <div class="actions">
+     <button class="btn primary" id="btnTgGen" onclick="genFor('telegram', false)">✦ فقط تولید</button>
+     <button class="btn telegram" id="btnTgGenSend" onclick="genFor('telegram', true)">✈ تولید + ارسال</button>
+     <button class="btn telegram" onclick="sendLast('telegram')">✈ ارسال آخرین</button>
+    </div>
+    <div class="muted" id="tgLastPrice" style="margin-top:10px"></div>
+    <div class="output" id="tgOutput"></div>
+   </div>
+  </section>
+
+  <!-- ============ زمان‌بندی ============ -->
+  <section id="page-schedule" class="page">
+   <div class="panel">
+    <div class="sectionHead"><h2>➕ زمان‌بندی جدید</h2></div>
+    <div class="muted" style="margin-bottom:12px">زمان‌بند هر ۳۰ ثانیه چک می‌کنه. اپ باید باز باشه.</div>
+    <div class="grid2">
+     <div class="field"><label>پلتفرم</label><select id="schPlatform"><option value="bale">بله</option><option value="telegram">تلگرام</option></select></div>
+     <div class="field"><label>تکرار</label><select id="schRepeat"><option>یک‌بار</option><option>روزانه</option><option>هفتگی</option></select></div>
+     <div class="field"><label>تاریخ</label><input id="schDate" type="date"></div>
+     <div class="field"><label>ساعت</label><input id="schTime" type="time" value="10:00"></div>
+     <div class="field full"><label>کانال (اختیاری)</label><input id="schChannel" placeholder="اگه خالی باشه، از پیش‌فرض استفاده می‌شه" dir="ltr"></div>
+     <div class="field full"><label>متن پست</label><textarea id="schText" placeholder="متن پست..."></textarea></div>
+    </div>
+    <div class="actions">
+     <button class="btn primary" onclick="addSchedule()">➕ افزودن</button>
+     <button class="btn" onclick="fillScheduleFromLast()">📋 از آخرین محتوا</button>
+    </div>
+   </div>
+
+   <div class="panel">
+    <div class="sectionHead"><h2>📋 لیست زمان‌بندی‌ها</h2><button class="btn sm danger" onclick="clearAllSchedules()">پاک همه</button></div>
+    <div id="scheduleList"></div>
+   </div>
+
+   <div class="panel">
+    <div class="sectionHead"><h2>📜 لاگ</h2><button class="btn sm" onclick="document.getElementById('schedLog').textContent=''">پاک</button></div>
+    <div class="schedLog" id="schedLog"></div>
+   </div>
+  </section>
+
+  <!-- ============ تاریخچه ============ -->
+  <section id="page-history" class="page">
+   <div class="panel">
+    <div class="sectionHead"><h2>تاریخچه</h2><button class="btn sm danger" onclick="clearHistory()">پاک</button></div>
+    <div id="historyList"></div>
+   </div>
+  </section>
+
+  <!-- ============ کسب‌وکار ============ -->
+  <section id="page-business" class="page">
+   <div class="panel">
+    <div class="sectionHead"><h2>🏢 پروفایل کسب‌وکار</h2></div>
+    <div class="field"><label>نام برند</label><input id="bizBrand" placeholder="مثلاً یدونه"></div>
+    <div class="field"><label>وب‌سایت</label><input id="bizWebsite" placeholder="yedooneh.com"></div>
+    <div class="field"><label>شماره تماس</label><input id="bizPhone" placeholder="09155805484"></div>
+    <div class="field"><label>شعار</label><input id="bizSlogan" placeholder="شعار"></div>
+    <div class="field"><label>توضیحات</label><textarea id="bizDesc" placeholder="محصولات، مخاطبان، مزیت..."></textarea></div>
+    <div class="actions"><button class="btn primary" onclick="saveBusiness()">💾 ذخیره</button></div>
+   </div>
+  </section>
+
+  <!-- ============ تنظیمات ============ -->
+  <section id="page-settings" class="page">
+   <div class="panel">
+    <div class="sectionHead"><h2>🤖 اتصال AI</h2></div>
+    <div class="field"><label>API Key</label><input id="setApiKey" dir="ltr"></div>
+    <div class="field"><label>Base URL</label><input id="setBaseUrl" dir="ltr"></div>
+    <div class="field"><label>Model</label><input id="setModel" dir="ltr"></div>
+   </div>
+   <div class="panel">
+    <div class="sectionHead"><h2>💰 قیمت‌گذاری</h2></div>
+    <div class="field"><label>نرخ دلار (تومان)</label><input id="setUsd" type="number" value="260000"></div>
+    <div class="field"><label>ضریب سود</label><input id="setFactor" type="number" step="0.1" value="1.5"></div>
+    <div class="field"><label>قیمت ورودی ($/1M)</label><input id="setInPrice" type="number" step="0.01" value="0.15"></div>
+    <div class="field"><label>قیمت خروجی ($/1M)</label><input id="setOutPrice" type="number" step="0.01" value="0.60"></div>
+   </div>
+   <div class="actions">
+    <button class="btn primary" onclick="saveSettings()">💾 ذخیره</button>
+    <button class="btn danger" onclick="resetUsage()">🗑 صفر آمار</button>
+    <button class="btn danger" onclick="resetAll()">⚠ پاک همه</button>
+   </div>
+  </section>
+ </div>
+</div>
+
+<!-- ============ نوار پایین ============ -->
+<nav class="bottomNav">
+ <button data-page="home" class="active"><span>⌂</span>خانه</button>
+ <button data-page="studio"><span>✦</span>استودیو</button>
+ <button data-page="bale"><span>◆</span>بله</button>
+ <button data-page="telegram"><span>✈</span>تلگرام</button>
+ <button data-page="schedule"><span>🕐</span>زمان</button>
+ <button data-page="history"><span>◷</span>تاریخچه</button>
+ <button data-page="business"><span>▣</span>برند</button>
+ <button data-page="settings"><span>⚙</span>تنظیمات</button>
+</nav>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* ================== تنظیمات ================== */
+const DEFAULTS = {
+  ai_api_key: "sk-atFYihnYKbJLk5zeoqe92mhCSTd6dewpbFodalA0HVvooKAk",
+  ai_base_url: "https://api.gapgpt.app/v1",
+  ai_model: "deepseek-v4.1-flash",
+  usd_to_toman: 260000,
+  profit_factor: 1.5,
+  input_price: 0.15,
+  output_price: 0.60,
+  bale_token: "", bale_channel: "",
+  bale_api: "https://tapi.bale.ai/bot",
+  tg_token: "", tg_channel: "",
+  tg_api: "https://api.telegram.org/bot",
+  business: {brand:"", website:"", phone:"", slogan:"", description:""},
+  usage: {input:0, output:0, requests:0, cost:0, sell:0, profit:0}
+};
+
+let cfg = loadCfg();
+let history = loadJSON("fy7_history", []);
+let schedules = loadJSON("fy7_schedules", []);
+let lastOutput = {bale: "", telegram: ""};
+
+function loadCfg() {
+  const saved = loadJSON("fy7_cfg", {});
+  return Object.assign({}, DEFAULTS, saved);
+}
+function saveCfg() { localStorage.setItem("fy7_cfg", JSON.stringify(cfg)); }
+function loadJSON(k, def) {
+  try { return JSON.parse(localStorage.getItem(k)) || def; } catch(e) { return def; }
+}
+function saveJSON(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
+
+/* ================== ناوبری ================== */
+function go(page) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  const el = document.getElementById("page-" + page);
+  if (el) el.classList.add("active");
+  document.querySelectorAll(".bottomNav button").forEach(b => {
+    b.classList.toggle("active", b.dataset.page === page);
+  });
+  window.scrollTo({top: 0, behavior: "smooth"});
+  if (page === "history") renderHistory();
+  if (page === "schedule") renderSchedule();
+  if (page === "business") loadBusiness();
+  if (page === "settings") loadSettings();
+  if (page === "bale") loadBaleUi();
+  if (page === "telegram") loadTgUi();
+}
+document.querySelectorAll(".bottomNav button").forEach(b => {
+  b.onclick = () => go(b.dataset.page);
+});
+
+/* ================== ابزار ================== */
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove("show"), 2500);
+}
+function fmtToman(n) {
+  try { return Math.round(n).toLocaleString("fa-IR") + " ت"; } catch(e) { return "۰ ت"; }
+}
+function fmtNum(n) {
+  try { return Number(n||0).toLocaleString("fa-IR"); } catch(e) { return "۰"; }
+}
+function esc(s) {
+  return String(s||"").replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+}
+function calcCost(inp, out) {
+  return (inp/1e6 * cfg.input_price + out/1e6 * cfg.output_price) * cfg.usd_to_toman;
+}
+
+/* ================== آمار ================== */
+function updateStats() {
+  const u = cfg.usage;
+  document.getElementById("statCost").textContent = fmtToman(u.cost);
+  document.getElementById("statSell").textContent = fmtToman(u.sell);
+  document.getElementById("statProfit").textContent = fmtToman(u.profit);
+  document.getElementById("statReq").textContent = fmtNum(u.requests);
+  document.getElementById("lblIn").textContent = fmtNum(u.input);
+  document.getElementById("lblOut").textContent = fmtNum(u.output);
+  const tot = Math.max(u.input + u.output, 1);
+  document.getElementById("barIn").style.width = Math.min(100, u.input/tot*100) + "%";
+  document.getElementById("barOut").style.width = Math.min(100, u.output/tot*100) + "%";
+}
+
+/* ================== سیستم پرامپت ================== */
+function buildSystemPrompt() {
+  return `تو «فروش‌یار AI» هستی؛ یک Agent حرفه‌ای فروش، بازاریابی و تولید محتوای فارسی برای کسب‌وکارهای ایرانی.
+وظایف: تولید کپشن، توضیحات محصول، متن سئو، کمپین فروش، شعار، CTA، ایده محتوا.
+قوانین:
+- پاسخ فارسی، طبیعی، دقیق و آماده استفاده.
+- اطلاعاتی که کاربر نداده را نساز.
+- از کلیشه و متن رباتی دوری کن.
+- فقط متن نهایی بنویس — بدون توضیح، بدون مقدمه، بدون سوال، بدون چند نسخه.
+
+پروفایل کسب‌وکار:
+${JSON.stringify(cfg.business)}`;
+}
+
+/* ================== درخواست AI ================== */
+async function askAI(prompt) {
+  const url = cfg.ai_base_url.replace(/\/+$/, "") + "/chat/completions";
+  const body = {
+    model: cfg.ai_model,
+    messages: [
+      {role: "system", content: buildSystemPrompt()},
+      {role: "user", content: prompt}
+    ],
+    temperature: 0.72
+  };
+  let r;
+  try {
+    r = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + cfg.ai_api_key
+      },
+      body: JSON.stringify(body)
+    });
+  } catch(e) {
+    throw new Error("خطای اتصال به AI:\n" + e.message);
+  }
+  if (!r.ok) {
+    const txt = await r.text().catch(() => "");
+    throw new Error("خطای AI " + r.status + ":\n" + txt.slice(0, 300));
+  }
+  const d = await r.json();
+  const text = d.choices?.[0]?.message?.content || "";
+  if (!text) throw new Error("پاسخی دریافت نشد");
+  const u = d.usage || {};
+  const inp = Number(u.prompt_tokens ?? u.input_tokens ?? 0);
+  const out = Number(u.completion_tokens ?? u.output_tokens ?? 0);
+  const cost = calcCost(inp, out);
+  const sell = cost * cfg.profit_factor;
+  const profit = sell - cost;
+  cfg.usage.input += inp;
+  cfg.usage.output += out;
+  cfg.usage.requests++;
+  cfg.usage.cost += cost;
+  cfg.usage.sell += sell;
+  cfg.usage.profit += profit;
+  saveCfg();
+  updateStats();
+  return {text, cost, sell, profit, input: inp, output: out};
+}
+
+/* ================== تست AI ================== */
+async function testAI() {
+  const badge = document.getElementById("statusBadge");
+  badge.textContent = "● تست...";
+  try {
+    const url = cfg.ai_base_url.replace(/\/+$/, "") + "/chat/completions";
+    const r = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + cfg.ai_api_key
+      },
+      body: JSON.stringify({
+        model: cfg.ai_model,
+        messages: [{role:"user", content:"سلام"}]
+      })
+    });
+    if (r.ok) {
+      badge.textContent = "● AI آنلاین";
+      badge.classList.remove("offline");
+      toast("✅ AI آنلاین است");
+    } else {
+      badge.textContent = "● خطای " + r.status;
+      badge.classList.add("offline");
+      toast("⚠️ خطای " + r.status);
+    }
+  } catch(e) {
+    badge.textContent = "● آفلاین";
+    badge.classList.add("offline");
+    toast("❌ " + e.message);
+  }
+}
+
+/* ================== استودیو ================== */
+async function generate() {
+  const product = document.getElementById("inProduct").value.trim();
+  if (!product) { toast("نام محصول را وارد کن"); return; }
+
+  const prompt = `برای محصول «${product}» یک ${document.getElementById("inType").value} برای ${document.getElementById("inPlatform").value} تولید کن.
+لحن: ${document.getElementById("inTone").value}
+مخاطب: ${document.getElementById("inAudience").value || "عمومی"}
+طول: ${document.getElementById("inLength").value}
+اطلاعات: ${document.getElementById("inExtra").value}
+
+فقط یک نسخه نهایی بنویس — بدون توضیح، بدون مقدمه.`;
+
+  const btn = document.getElementById("btnGen");
+  btn.disabled = true;
+  btn.textContent = "⏳ در حال تولید...";
+  document.getElementById("output").textContent = "در حال تولید...";
+  document.getElementById("lastPrice").textContent = "";
+
+  try {
+    const res = await askAI(prompt);
+    document.getElementById("output").textContent = res.text;
+    document.getElementById("lastPrice").innerHTML =
+      `هزینه: <span class="priceTag">${fmtToman(res.cost)}</span>` +
+      `فروش: <span class="priceTag">${fmtToman(res.sell)}</span>` +
+      `سود: <span class="priceTag orange">${fmtToman(res.profit)}</span>` +
+      `<span class="muted">(ورودی: ${fmtNum(res.input)} • خروجی: ${fmtNum(res.output)})</span>`;
+
+    history.unshift({
+      date: new Date().toLocaleString("fa-IR"),
+      product, type: document.getElementById("inType").value,
+      text: res.text, cost: res.cost, sell: res.sell, profit: res.profit
+    });
+    history = history.slice(0, 100);
+    saveJSON("fy7_history", history);
+    toast("✅ محتوا تولید شد");
+  } catch(e) {
+    document.getElementById("output").textContent = "❌ " + e.message;
+  }
+  btn.disabled = false;
+  btn.textContent = "✦ تولید با Agent";
+}
+function clearOutput() {
+  document.getElementById("output").textContent = "";
+  document.getElementById("lastPrice").textContent = "";
+}
+function copyOutput() {
+  const t = document.getElementById("output").textContent;
+  if (!t) { toast("چیزی برای کپی نیست"); return; }
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(t).then(() => toast("📋 کپی شد")).catch(() => fallbackCopy(t));
+  } else {
+    fallbackCopy(t);
+  }
+}
+function fallbackCopy(t) {
+  const ta = document.createElement("textarea");
+  ta.value = t; document.body.appendChild(ta); ta.select();
+  try { document.execCommand("copy"); toast("📋 کپی شد"); } catch(e) { toast("کپی نشد"); }
+  ta.remove();
+}
+
+/* ================== ارسال به پیام‌رسان ================== */
+async function sendMessage(platform, text) {
+  if (!text || !text.trim()) { toast("متن خالیه"); return false; }
+
+  if (platform === "bale") {
+    if (!cfg.bale_token) { toast("توکن بله تنظیم نشده"); go("bale"); return false; }
+    if (!cfg.bale_channel) { toast("کانال بله انتخاب نشده"); go("bale"); return false; }
+    const url = `${cfg.bale_api.replace(/\/+$/,"")}${cfg.bale_token}/sendMessage`;
+    try {
+      const r = await fetch(url, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({chat_id: cfg.bale_channel, text})
+      });
+      const d = await r.json();
+      if (d.ok) { toast("✅ ارسال به بله موفق"); return true; }
+      toast("❌ " + (d.description || "خطا"));
+      return false;
+    } catch(e) { toast("❌ " + e.message); return false; }
+  }
+  if (platform === "telegram") {
+    if (!cfg.tg_token) { toast("توکن تلگرام تنظیم نشده"); go("telegram"); return false; }
+    if (!cfg.tg_channel) { toast("کانال تلگرام انتخاب نشده"); go("telegram"); return false; }
+    const url = `${cfg.tg_api.replace(/\/+$/,"")}${cfg.tg_token}/sendMessage`;
+    try {
+      const r = await fetch(url, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({chat_id: cfg.tg_channel, text})
+      });
+      const d = await r.json();
+      if (d.ok) { toast("✅ ارسال به تلگرام موفق"); return true; }
+      toast("❌ " + (d.description || "خطا"));
+      return false;
+    } catch(e) { toast("❌ " + e.message); return false; }
+  }
+}
+async function sendOutputTo(platform) {
+  const t = document.getElementById("output").textContent;
+  if (!t) { toast("اول محتوا تولید کن"); return; }
+  await sendMessage(platform, t);
+}
+
+/* ================== بله ================== */
+function loadBaleUi() {
+  document.getElementById("baleToken").value = cfg.bale_token || "";
+  document.getElementById("baleApi").value = cfg.bale_api || "https://tapi.bale.ai/bot";
+  document.getElementById("baleChannelLabel").textContent = cfg.bale_channel || "—";
+  document.getElementById("baleStatus").textContent = cfg.bale_token ? "آماده" : "وصل نیست";
+  renderBaleChannels();
+}
+function saveBale() {
+  cfg.bale_token = document.getElementById("baleToken").value.trim();
+  cfg.bale_api = document.getElementById("baleApi").value.trim();
+  saveCfg();
+  toast("✅ ذخیره شد");
+  document.getElementById("baleStatus").textContent = cfg.bale_token ? "آماده" : "وصل نیست";
+}
+async function testBot(platform) {
+  const token = platform === "bale" ? cfg.bale_token : cfg.tg_token;
+  const base = platform === "bale" ? cfg.bale_api : cfg.tg_api;
+  const boxId = platform === "bale" ? "baleResult" : "tgResult";
+  const box = document.getElementById(boxId);
+  if (!token) { toast("اول توکن رو ذخیره کن"); return; }
+  box.style.display = "block";
+  box.textContent = "در حال تست...";
+  try {
+    const url = `${base.replace(/\/+$/,"")}${token}/getMe`;
+    const r = await fetch(url);
+    const d = await r.json();
+    if (d.ok) {
+      box.textContent = "✅ بات معتبر\nنام: " + (d.result.first_name||"") +
+        "\nیوزرنیم: @" + (d.result.username||"") + "\nآیدی: " + d.result.id;
+      toast("✅ بات معتبر");
+    } else {
+      box.textContent = "❌ خطا:\n" + JSON.stringify(d, null, 2);
+      toast("❌ " + (d.description||"خطا"));
+    }
+  } catch(e) {
+    box.textContent = "❌ خطای شبکه: " + e.message;
+    toast("❌ " + e.message);
+  }
+}
+async function loadChannels(platform) {
+  if (platform !== "bale") return;
+  if (!cfg.bale_token) { toast("اول توکن رو ذخیره کن"); return; }
+  const box = document.getElementById("baleResult");
+  box.style.display = "block";
+  box.textContent = "در حال دریافت...";
+  try {
+    const url = `${cfg.bale_api.replace(/\/+$/,"")}${cfg.bale_token}/getUpdates`;
+    const r = await fetch(url);
+    const d = await r.json();
+    if (!d.ok) { box.textContent = "❌ " + JSON.stringify(d); return; }
+    if (!d.result || !d.result.length) {
+      box.textContent = "لیست خالی. راهنما:\n۱) بات رو ادمین کانال کن\n۲) پیام تو کانال بذار\n۳) دوباره تلاش کن";
+      return;
+    }
+    const chats = {};
+    d.result.forEach(u => {
+      if (u.channel_post) {
+        const c = u.channel_post.chat;
+        chats[c.id] = c.title || c.username || c.id;
+      }
+      if (u.message?.chat && u.message.chat.type !== "private") {
+        const c = u.message.chat;
+        chats[c.id] = c.title || c.username || c.id;
+      }
+    });
+    cfg.bale_channels = Object.entries(chats).map(([id, name]) => ({id, name}));
+    saveCfg();
+    box.textContent = "✅ " + cfg.bale_channels.length + " کانال پیدا شد";
+    renderBaleChannels();
+  } catch(e) {
+    box.textContent = "❌ " + e.message;
+  }
+}
+function renderBaleChannels() {
+  const el = document.getElementById("baleChannels");
+  if (!el) return;
+  const list = cfg.bale_channels || [];
+  if (!list.length) { el.innerHTML = ""; return; }
+  el.innerHTML = list.map(c =>
+    `<button class="btn sm" style="margin:3px" onclick="pickBaleChannel('${c.id}')">${esc(c.name)} (${c.id})</button>`
+  ).join("");
+}
+function pickBaleChannel(id) {
+  cfg.bale_channel = String(id);
+  saveCfg();
+  document.getElementById("baleChannelLabel").textContent = cfg.bale_channel;
+  toast("✅ انتخاب شد");
+}
+
+/* ================== تلگرام ================== */
+function loadTgUi() {
+  document.getElementById("tgToken").value = cfg.tg_token || "";
+  document.getElementById("tgApi").value = cfg.tg_api || "https://api.telegram.org/bot";
+  document.getElementById("tgChannel").value = cfg.tg_channel || "";
+  document.getElementById("tgStatus").textContent = cfg.tg_token ? "آماده" : "وصل نیست";
+}
+function saveTelegram() {
+  cfg.tg_token = document.getElementById("tgToken").value.trim();
+  cfg.tg_api = document.getElementById("tgApi").value.trim();
+  cfg.tg_channel = document.getElementById("tgChannel").value.trim();
+  saveCfg();
+  toast("✅ ذخیره شد");
+  document.getElementById("tgStatus").textContent = cfg.tg_token ? "آماده" : "وصل نیست";
+}
+
+/* ================== تولید برای پیام‌رسان ================== */
+async function genFor(platform, send) {
+  const p = platform === "bale" ? "bale" : "tg";
+  const product = document.getElementById(p + "Product").value.trim();
+  const promptExtra = document.getElementById(p + "Prompt").value.trim();
+  if (!product && !promptExtra) { toast("موضوع یا دستور رو وارد کن"); return; }
+
+  const type = document.getElementById(p + "Type").value;
+  const tone = document.getElementById(p + "Tone").value;
+  const length = document.getElementById(p + "Length").value;
+  const pname = platform === "bale" ? "بله" : "تلگرام";
+
+  let prompt = `یک ${type} برای کانال ${pname} تولید کن.\nموضوع: ${product}\nلحن: ${tone}\nطول: ${length}\n`;
+  if (promptExtra) prompt += `دستور: ${promptExtra}\n`;
+  prompt += `\nفقط یک نسخه نهایی بنویس — بدون توضیح، بدون مقدمه، بدون سوال.\nفقط متن خام قابل انتشار.`;
+
+  const btn1 = document.getElementById(platform === "bale" ? "btnBaleGen" : "btnTgGen");
+  const btn2 = document.getElementById(platform === "bale" ? "btnBaleGenSend" : "btnTgGenSend");
+  const out = document.getElementById(p + "Output");
+  const lbl = document.getElementById(p + "LastPrice");
+
+  btn1.disabled = true; btn2.disabled = true;
+  out.textContent = "⏳ در حال تولید...";
+  lbl.textContent = "";
+
+  try {
+    const res = await askAI(prompt);
+    lastOutput[platform] = res.text;
+    out.textContent = res.text;
+    lbl.innerHTML = `هزینه: <span class="priceTag">${fmtToman(res.cost)}</span>` +
+      `فروش: <span class="priceTag">${fmtToman(res.sell)}</span>` +
+      `سود: <span class="priceTag orange">${fmtToman(res.profit)}</span>`;
+
+    history.unshift({
+      date: new Date().toLocaleString("fa-IR"),
+      product: product || pname, type,
+      text: res.text, cost: res.cost, sell: res.sell, profit: res.profit
+    });
+    history = history.slice(0, 100);
+    saveJSON("fy7_history", history);
+
+    if (send) {
+      await sendMessage(platform, res.text);
+    } else {
+      toast("✅ محتوا آماده شد");
+    }
+  } catch(e) {
+    out.textContent = "❌ " + e.message;
+  }
+  btn1.disabled = false; btn2.disabled = false;
+}
+async function sendLast(platform) {
+  const t = lastOutput[platform] || document.getElementById(platform === "bale" ? "baleOutput" : "tgOutput").textContent;
+  if (!t) { toast("اول محتوا تولید کن"); return; }
+  await sendMessage(platform, t);
+}
+
+/* ================== زمان‌بندی ================== */
+function renderSchedule() {
+  const el = document.getElementById("scheduleList");
+  if (!schedules.length) {
+    el.innerHTML = '<div class="muted">هنوز زمان‌بندی‌ای اضافه نشده.</div>';
+    return;
+  }
+  el.innerHTML = schedules.map((s, i) => `
+    <div class="schedItem">
+      <div class="row">
+        <b>${s.platform === "bale" ? "◆ بله" : "✈ تلگرام"} — ${s.datetime}</b>
+        <button class="btn sm danger" onclick="removeSchedule(${i})">حذف</button>
+      </div>
+      <div class="muted">تکرار: ${s.repeat}</div>
+      <div class="preview">${esc((s.text||"").slice(0, 80))}...</div>
+    </div>
+  `).join("");
+}
+function addSchedule() {
+  const text = document.getElementById("schText").value.trim();
+  if (!text) { toast("متن پست رو وارد کن"); return; }
+  const date = document.getElementById("schDate").value;
+  const time = document.getElementById("schTime").value;
+  if (!date || !time) { toast("تاریخ و ساعت رو وارد کن"); return; }
+  const dt = `${date} ${time}`;
+  const when = new Date(dt.replace(" ", "T"));
+  if (isNaN(when) || when <= new Date()) { toast("زمان باید در آینده باشد"); return; }
+
+  schedules.push({
+    datetime: dt,
+    platform: document.getElementById("schPlatform").value,
+    repeat: document.getElementById("schRepeat").value,
+    channel: document.getElementById("schChannel").value.trim(),
+    text,
+    created: new Date().toISOString()
+  });
+  saveJSON("fy7_schedules", schedules);
+  document.getElementById("schText").value = "";
+  renderSchedule();
+  toast("✅ زمان‌بندی اضافه شد");
+  logSched("➕ زمان‌بندی جدید: " + dt);
+}
+function removeSchedule(i) {
+  schedules.splice(i, 1);
+  saveJSON("fy7_schedules", schedules);
+  renderSchedule();
+  toast("🗑 حذف شد");
+}
+function clearAllSchedules() {
+  if (!confirm("همه زمان‌بندی‌ها پاک شود؟")) return;
+  schedules = [];
+  saveJSON("fy7_schedules", schedules);
+  renderSchedule();
+  toast("✅ پاک شد");
+}
+function fillScheduleFromLast() {
+  const t = document.getElementById("output").textContent;
+  if (!t) { toast("آخرین محتوایی وجود نداره"); return; }
+  document.getElementById("schText").value = t;
+  toast("📋 منتقل شد");
+}
+function scheduleCurrent() {
+  fillScheduleFromLast();
+  go("schedule");
+}
+function logSched(msg) {
+  const el = document.getElementById("schedLog");
+  if (!el) return;
+  const ts = new Date().toLocaleTimeString("fa-IR");
+  el.textContent += `[${ts}] ${msg}\n`;
+  el.scrollTop = el.scrollHeight;
+}
+
+/* ================== زمان‌بند خودکار ================== */
+function checkSchedules() {
+  const now = new Date();
+  let changed = false;
+  for (let i = schedules.length - 1; i >= 0; i--) {
+    const s = schedules[i];
+    const when = new Date(s.datetime.replace(" ", "T"));
+    if (isNaN(when)) { schedules.splice(i, 1); changed = true; continue; }
+    if (when <= now) {
+      sendMessage(s.platform, s.text).then(ok => {
+        if (ok) logSched("✅ ارسال: " + s.datetime + " (" + s.platform + ")");
+        else logSched("❌ خطا: " + s.datetime);
+      });
+      if (s.repeat === "روزانه") {
+        when.setDate(when.getDate() + 1);
+        s.datetime = when.toISOString().slice(0, 16).replace("T", " ");
+        changed = true;
+      } else if (s.repeat === "هفتگی") {
+        when.setDate(when.getDate() + 7);
+        s.datetime = when.toISOString().slice(0, 16).replace("T", " ");
+        changed = true;
+      } else {
+        schedules.splice(i, 1);
+        changed = true;
+      }
+    }
+  }
+  if (changed) { saveJSON("fy7_schedules", schedules); renderSchedule(); }
+}
+setInterval(checkSchedules, 30000);
+
+/* ================== تاریخچه ================== */
+function renderHistory() {
+  const el = document.getElementById("historyList");
+  if (!history.length) {
+    el.innerHTML = '<div class="muted" style="padding:20px;text-align:center">هنوز محتوایی تولید نشده.</div>';
+    return;
+  }
+  el.innerHTML = history.map((h, i) => `
+    <div class="historyItem">
+      <div style="flex:1">
+        <b>${esc(h.product)}</b>
+        <div class="muted">${esc(h.type)} • ${esc(h.date)}</div>
+      </div>
+      <button class="btn sm" onclick="viewHistory(${i})">باز</button>
+    </div>
+  `).join("");
+}
+function viewHistory(i) {
+  const h = history[i];
+  if (!h) return;
+  document.getElementById("output").textContent = h.text;
+  go("studio");
+  toast("📄 بارگذاری شد");
+}
+function clearHistory() {
+  if (!confirm("تاریخچه پاک شود؟")) return;
+  history = [];
+  saveJSON("fy7_history", history);
+  renderHistory();
+  toast("✅ پاک شد");
+}
+
+/* ================== کسب‌وکار ================== */
+function loadBusiness() {
+  const b = cfg.business || {};
+  document.getElementById("bizBrand").value = b.brand || "";
+  document.getElementById("bizWebsite").value = b.website || "";
+  document.getElementById("bizPhone").value = b.phone || "";
+  document.getElementById("bizSlogan").value = b.slogan || "";
+  document.getElementById("bizDesc").value = b.description || "";
+}
+function saveBusiness() {
+  cfg.business = {
+    brand: document.getElementById("bizBrand").value.trim(),
+    website: document.getElementById("bizWebsite").value.trim(),
+    phone: document.getElementById("bizPhone").value.trim(),
+    slogan: document.getElementById("bizSlogan").value.trim(),
+    description: document.getElementById("bizDesc").value.trim()
+  };
+  saveCfg();
+  toast("✅ ذخیره شد");
+}
+
+/* ================== تنظیمات ================== */
+function loadSettings() {
+  document.getElementById("setApiKey").value = cfg.ai_api_key;
+  document.getElementById("setBaseUrl").value = cfg.ai_base_url;
+  document.getElementById("setModel").value = cfg.ai_model;
+  document.getElementById("setUsd").value = cfg.usd_to_toman;
+  document.getElementById("setFactor").value = cfg.profit_factor;
+  document.getElementById("setInPrice").value = cfg.input_price;
+  document.getElementById("setOutPrice").value = cfg.output_price;
+}
+function saveSettings() {
+  cfg.ai_api_key = document.getElementById("setApiKey").value.trim();
+  cfg.ai_base_url = document.getElementById("setBaseUrl").value.trim();
+  cfg.ai_model = document.getElementById("setModel").value.trim();
+  cfg.usd_to_toman = Number(document.getElementById("setUsd").value) || 260000;
+  cfg.profit_factor = Number(document.getElementById("setFactor").value) || 1.5;
+  cfg.input_price = Number(document.getElementById("setInPrice").value) || 0.15;
+  cfg.output_price = Number(document.getElementById("setOutPrice").value) || 0.60;
+  saveCfg();
+  toast("✅ تنظیمات ذخیره شد");
+}
+function resetUsage() {
+  if (!confirm("آمار صفر شود؟")) return;
+  cfg.usage = {input:0, output:0, requests:0, cost:0, sell:0, profit:0};
+  saveCfg();
+  updateStats();
+  toast("✅ صفر شد");
+}
+function resetAll() {
+  if (!confirm("همه داده‌ها پاک شود؟")) return;
+  localStorage.clear();
+  location.reload();
+}
+
+/* ================== راه‌اندازی ================== */
+function init() {
+  updateStats();
+  // تاریخ پیش‌فرض
+  const today = new Date();
+  today.setDate(today.getDate() + 1);
+  document.getElementById("schDate").value = today.toISOString().slice(0, 10);
+  loadBaleUi();
+  loadTgUi();
+  loadBusiness();
+  loadSettings();
+  renderSchedule();
+  renderHistory();
+  logSched("🚀 اپ راه‌اندازی شد");
+}
+init();
+</script>
+</body>
+</html>
